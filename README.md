@@ -1,3 +1,3 @@
-# java-project-template
+# locking-redis
 
-The Java project template by gradle.
+Use Redis (in-memory key–value database) to implement locking protocols for concurrency control.
