@@ -6,7 +6,36 @@ import java.util.UUID;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
 
+
+/**
+ * Implement binary locking protocol with Redis
+ * 
+ * @author  Wuyi Chen
+ * @date    08/05/2020
+ * @version 1.0
+ * @since   1.0
+ */
 public class BinaryLock {
+	/**
+	 * Acquire a binary lock on a record with timeout.
+	 * 
+	 * @param  conn
+	 *         The Redis connection.
+	 *         
+	 * @param  dataType
+	 *         The type of the record. It can be the table name in the relational database.
+	 * 
+	 * @param  id
+	 *         The unique identifier of the record. It can be primary keys in the relational database.
+	 *         
+	 * @param  acquireTimeout
+	 *         The timeout of acquiring the lock.
+	 * 
+	 * @param  lockTimeout
+	 *         The timeout of the lock.
+	 *         
+	 * @return  The identifier of the lock.
+	 */
 	public String acquireLockWithTimeout(Jedis conn, String dataType, String id, long acquireTimeout, long lockTimeout) {
 		String identifier = UUID.randomUUID().toString();                      // Generate a 128-bit identifier.
 		String lockKey = "lock:" + dataType + ":" + id;                        // Concatenate the key for the lock.
@@ -32,6 +61,23 @@ public class BinaryLock {
 		return null;                                                           // null indicates that the lock was not acquired
 	}
 
+	/**
+	 * Release a binary lock.
+	 * 
+	 * @param  conn
+	 *         The Redis connection.
+	 *         
+	 * @param  dataType
+	 *         The type of the record. It can be the table name in the relational database.
+	 *         
+	 * @param  id
+	 *         The unique identifier of the record. It can be primary keys in the relational database.
+	 *         
+	 * @param  identifier
+	 *         The identifier of the lock. This identifier will be used to check there is no change when releasing the lock.
+	 *         
+	 * @return  {@code true} if the lock has been release successfully, {@code false} otherwise.
+	 */
 	public boolean releaseLock(Jedis conn, String dataType, String id, String identifier) {
 		String lockKey = "lock:" + dataType + ":" + id;                        // Concatenate the key for the lock.
 
