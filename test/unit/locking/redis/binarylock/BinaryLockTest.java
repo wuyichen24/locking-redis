@@ -1,4 +1,4 @@
-package locking.redis.binarylocking;
+package locking.redis.binarylock;
 
 /**
  * Test binary locking protocol implementation with Redis.
@@ -11,7 +11,7 @@ package locking.redis.binarylocking;
  * @version 1.0
  * @since   1.0
  */
-public class BinaryLockingTest {
+public class BinaryLockTest {
 	public static void main(String args[]) throws InterruptedException {
 		Thread t1 = new Thread(new WorkingThread());
 		Thread t2 = new Thread(new WorkingThread());

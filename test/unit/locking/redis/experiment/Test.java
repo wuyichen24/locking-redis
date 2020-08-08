@@ -1,4 +1,4 @@
-package locking.redis.readwritelocking;
+package locking.redis.experiment;
 
 import java.util.Arrays;
 import java.util.List;

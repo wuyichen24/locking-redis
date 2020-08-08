@@ -1,4 +1,4 @@
-package locking.redis.readwritelocking;
+package locking.redis.readwritelock;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +8,17 @@ import locking.redis.Lock;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
 
+/**
+ * Implement the read lock of the read-write lock protocol with Redis.
+ * 
+ * <p>This read lock class use the Lua script and Redis transaction to 
+ * implement check-and-set (CAS) when acquiring the lock.
+ * 
+ * @author  Wuyi Chen
+ * @date    08/08/2020
+ * @version 1.0
+ * @since   1.0
+ */
 public class ReadLock implements Lock {
     @Override
     public String acquireLock(Jedis conn, String dataType, String id, long acquireTimeout) {
@@ -19,9 +30,6 @@ public class ReadLock implements Lock {
 		
         while (System.currentTimeMillis() < end) {
             // Use Lua script to implement the conditional update with isolation guarantee.
-            conn.watch(readLockKey, writeLockKey);
-
-            Transaction trans = conn.multi(); 
             String script = conn.scriptLoad("if redis.call('exists', KEYS[1]) == 0 then\n"         // If there is no write lock, add this read lock into the read lock set.
                     +                       "    redis.call('sadd', KEYS[2], ARGV[1])\n"
                     +                       "    return 1\n"
@@ -30,15 +38,11 @@ public class ReadLock implements Lock {
 			
             List<String> keys = Arrays.asList(writeLockKey, readLockKey);
             List<String> args = Arrays.asList(identifier);
-            trans.evalsha(script, keys, args);
-	        
-            List<Object> results = trans.exec();
-			
-            conn.unwatch();
-			
-            if (results != null && (Long) results.get(0) == 1L) {                        // If there is no other threads breaks the transaction and the read lock has been added successfully,
+            Object result = conn.evalsha(script, keys, args);
+	       
+            if (result != null && (Long) result == 1L) {                                 // If there is no other threads breaks the transaction and the read lock has been added successfully,
                 return identifier;                                                       // return the identifier.
-	    }
+            }
 			
             try {
                 Thread.sleep(1);                                                         // Wait 1 milliseconds to try to acquire the lock again if there is a write lock or the transaction failed.

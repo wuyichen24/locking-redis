@@ -1,4 +1,4 @@
-package locking.redis.binarylocking;
+package locking.redis.binarylock;
 
 import java.util.List;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package locking.redis.readwritelocking;
+package locking.redis.readwritelock;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,34 +8,38 @@ import locking.redis.Lock;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
 
+/**
+ * Implement the write lock of the read-write lock protocol with Redis.
+ * 
+ * <p>This write lock class use the Lua script and Redis transaction to 
+ * implement check-and-set (CAS) when acquiring the lock.
+ * 
+ * @author  Wuyi Chen
+ * @date    08/08/2020
+ * @version 1.0
+ * @since   1.0
+ */
 public class WriteLock implements Lock {
     @Override
     public String acquireLock(Jedis conn, String dataType, String id, long acquireTimeout) {
-        String identifier   = UUID.randomUUID().toString();                      // Generate a 128-bit identifier.
-        String writeLockKey = getLockKey(dataType, id);                          // Concatenate the key for the write lock.
-        String readLockKey  = ReadLock.getLockKey(dataType, id);                 // Concatenate the key for the read lock.
-        long   end          = System.currentTimeMillis() + acquireTimeout;       // Calculate the final time point before giving up acquiring the lock.
+        String identifier   = UUID.randomUUID().toString();                              // Generate a 128-bit identifier.
+        String writeLockKey = getLockKey(dataType, id);                                  // Concatenate the key for the write lock.
+        String readLockKey  = ReadLock.getLockKey(dataType, id);                         // Concatenate the key for the read lock.
+        long   end          = System.currentTimeMillis() + acquireTimeout;               // Calculate the final time point before giving up acquiring the lock.
 		
         while (System.currentTimeMillis() < end) {
             // Use Lua script to implement the conditional update with isolation guarantee.
-            conn.watch(readLockKey, writeLockKey);			
-			
-            Transaction trans = conn.multi(); 
             String script = conn.scriptLoad("if redis.call('exists', KEYS[1]) == 0 and redis.call('scard', KEYS[2]) == 0 then\n"  // If there is no write lock and read lock, set the write lock.
-                    +                       "    redis.call('add', KEYS[1], ARGV[1])\n"
+                    +                       "    redis.call('set', KEYS[1], ARGV[1])\n"
                     +                       "    return 1\n"
                     +                       "end\n"
                     +                       "return 0");
 						
             List<String> keys = Arrays.asList(writeLockKey, readLockKey);
             List<String> args = Arrays.asList(identifier);
-            trans.evalsha(script, keys, args);
-				        
-            List<Object> results = trans.exec();
-						
-            conn.unwatch();
+            Object result = conn.evalsha(script, keys, args);
 			
-            if (results != null && (Long) results.get(0) == 1L) {                        // If there is no other threads breaks the transaction and the write lock has been set successfully,
+            if (result != null && (Long) result == 1L) {                                 // If there is no other threads breaks the transaction and the write lock has been set successfully,
                 return identifier;                                                       // return the identifier.
             }
 			
