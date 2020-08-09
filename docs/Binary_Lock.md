@@ -23,4 +23,5 @@
 - If there is a lock the data record, the thread/client will wait to acquire a lock until the acquiring lock timeout is reached.
 
 #### Release Lock
-- Check there is no 
+- Check there is no change on the lock identifier.
+- Delete the key-value pair for the lock.
