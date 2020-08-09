@@ -35,7 +35,7 @@
 - Remove the lock identifier from the Set.
 
 #### Acquire Write Lock
-- If there is no write lock or read lock on the data record, the thread/client can acquire a write lock on the data record.
+- If there is no write lock and read lock on the data record, the thread/client can acquire a write lock on the data record.
    - Add a new key-value pair in Redis: { key=`writelock:<datatype>:<id>`, value=`<identifier>` }
    - Return the lock identifer to the thread/client.
    
