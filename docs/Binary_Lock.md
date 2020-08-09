@@ -8,6 +8,10 @@
 
 ## Design
 ### Data Model
+| Key | Value (String) |
+|----|----|
+| `writelock:<datatype>:<id>` | `<identifier>` |
+
 - A lock on a data record is represented as a key-value pair in Redis, value is String:
     - The format of key: `lock:<datatype>:<id>`
        - `<datatype>`: The type of the data record.
