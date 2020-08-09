@@ -17,4 +17,7 @@
 
 ### Logic
 #### Acquire Lock
+- If there is no lock on the data record, the thread/client can acquire a lock on the data record.
+- If there is a lock the data record, the thread/client will wait to acquire a lock until the acquiring lock timeout is reached.
+
 #### Release Lock
