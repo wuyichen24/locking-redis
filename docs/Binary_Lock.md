@@ -16,3 +16,5 @@
        - `<identifier>`: The identifier of the lock. This identifier will be verified when releasing the lock.
 
 ### Logic
+#### Acquire Lock
+#### Release Lock
