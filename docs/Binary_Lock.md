@@ -11,8 +11,8 @@
 - A lock on a data record is represented as a key-value pair in Redis:
     - The format of key: `lock:<datatype>:<id>`
        - `<datatype>`: The type of the data record.
-       - `<id>`: The unique identifer of the data record.
-    - The format of value: <identifier>
-       - 
+       - `<id>`: The unique identifier of the data record.
+    - The format of value: `<identifier>`
+       - `<identifier>`: The identifier of the lock. This identifier will be verified when releasing the lock.
 
 ### Logic
