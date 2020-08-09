@@ -8,7 +8,7 @@
 
 ## Design
 ### Data Model
-- A lock on a data record is represented as a key-value pair in Redis:
+- A lock on a data record is represented as a key-value pair (value is String) in Redis:
     - The format of key: `lock:<datatype>:<id>`
        - `<datatype>`: The type of the data record.
        - `<id>`: The unique identifier of the data record.
