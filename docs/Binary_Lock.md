@@ -18,6 +18,9 @@
 ### Logic
 #### Acquire Lock
 - If there is no lock on the data record, the thread/client can acquire a lock on the data record.
+   - Add a new key-value pair in Redis: { key=`lock:<datatype>:<id>`, value=`<identifier>` }
+   - Return the lock identifer to the thread/client.
 - If there is a lock the data record, the thread/client will wait to acquire a lock until the acquiring lock timeout is reached.
 
 #### Release Lock
+- Check there is no 
