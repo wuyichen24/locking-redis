@@ -21,5 +21,5 @@
    - The format of key: `writelock:<datatype>:<id>`
       - `<datatype>`: The type of the data record.
       - `<id>`: The unique identifier of the data record.
-   - The format of value: <identifier>
-      - <identifier>: The identifier of the write lock. This identifier will be verified when releasing the write lock.
+   - The format of value: `<identifier>`
+      - `<identifier>`: The identifier of the write lock. This identifier will be verified when releasing the write lock.
