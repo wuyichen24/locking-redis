@@ -29,6 +29,7 @@
 - If there is no write lock on the data record, the thread/client can acquire a read lock on the data record.
    - Add the lock identifier into the Set of the identifiers for the read lock on the same data record (This check-and-set operation is implemented in Lua script, to avoid other threads/clients to intervene the resources during the operation).
    - Return the lock identifer to the thread/client.
+- If there is a write lock on the data record, the thread/client will wait to acquire a lock until the acquiring lock timeout is reached.
    
 #### Release Read Lock
 - Check the lock identifier, which is provided by the thread/client, is existing in the Set of the identifiers for the read locks on the same data record.
@@ -38,6 +39,7 @@
 - If there is no write lock and read lock on the data record, the thread/client can acquire a write lock on the data record.
    - Add a new key-value pair in Redis: { key=`writelock:<datatype>:<id>`, value=`<identifier>` }
    - Return the lock identifer to the thread/client.
+- If there is a write lock or read lock on the data record, the thread/client will wait to acquire a lock until the acquiring lock timeout is reached.
    
 #### Release Write Lock
 - Check there is no change on the lock identifier (Compare the lock identifer provided by the thread/client with the identifier of the write lock in Redis).
