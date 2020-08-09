@@ -31,7 +31,7 @@
    - Return the lock identifer to the thread/client.
    
 #### Release Read Lock
-- Check the Set of the identifiers for the read lock has a lock identifier which is same with the lock identifier provided by the thread/client.
+- Check the lock identifier, which is provided by the thread/client, is existing in the Set of the identifiers for the read locks on the same data record.
 - Remove the lock identifier from the Set.
 
 #### Acquire Write Lock
