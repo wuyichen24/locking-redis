@@ -23,5 +23,5 @@
 - If there is a lock the data record, the thread/client will wait to acquire a lock until the acquiring lock timeout is reached.
 
 #### Release Lock
-- Check there is no change on the lock identifier.
+- Check there is no change on the lock identifier (Compare the lock identifer provided by the thread/client with the lock identifier in Redis).
 - Delete the key-value pair for the lock.
