@@ -11,12 +11,21 @@
 
 ## Design
 ### Data Model
+| Key | Value (Set) |
+|----|----|
+| `readlock:<datatype>:<id>` | `<identifier1>`, `<identifier2>`, ...., `<identifierN>` |
+
 - A read lock on a data record is represented as a key-value pair in Redis, value is Set:
    - The format of key: `readlock:<datatype>:<id>`
       - `<datatype>`: The type of the data record.
       - `<id>`: The unique identifier of the data record.
    - The format of value (Set): `<identifier1><identifier2>....<identifierN>`
       - The set is consists of multiple identifiers, each identifier is for one read lock.
+
+| Key | Value (String) |
+|----|----|
+| `writelock:<datatype>:<id>` | `<identifier>` |
+
 - A write lock on a data record is represented as a key-value pair in Redis, value is String:
    - The format of key: `writelock:<datatype>:<id>`
       - `<datatype>`: The type of the data record.
